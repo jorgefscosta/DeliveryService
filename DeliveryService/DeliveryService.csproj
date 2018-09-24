@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\load data.cypher" />
+    <Content Include="App_Data\get best route.cypher" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
