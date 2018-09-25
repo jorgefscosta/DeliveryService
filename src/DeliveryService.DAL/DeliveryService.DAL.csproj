@@ -4,4 +4,13 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Neo4j.Driver" Version="1.6.1" />
+    <PackageReference Include="Neo4jClient" Version="3.0.1.19" />
+  </ItemGroup>
+
 </Project>
