@@ -6,9 +6,6 @@ namespace DeliveryService.DAL.Models
 {
     public class BaseEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [JsonProperty("time")]
         public int Id { get; set; }
     }
 }

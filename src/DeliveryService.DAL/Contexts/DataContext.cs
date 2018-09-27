@@ -11,6 +11,7 @@ namespace DeliveryService.DAL.Contexts
         public DataContext(string dbUri, string user, string pass)
         {
             GraphDb = new GraphClient(new Uri(dbUri), user, pass);
+            GraphDb.Connect();
         }
     }
 }

@@ -10,9 +10,9 @@ namespace DeliveryService.DL.Services
     public interface IBaseService<T> where T : BaseEntity
     {
 
-        Task<IEnumerable<T>> GetAsync();
+        IEnumerable<T> GetAsync();
 
-        Task<T> GetById(int id);
+        T GetById(int id);
 
         IEnumerable<T> Where(Expression<Func<T, bool>> exp);
 
