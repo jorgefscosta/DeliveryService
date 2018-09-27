@@ -19,32 +19,32 @@ namespace DeliveryService.DL.Services
 
         public void Add(T entry)
         {
-            throw new NotImplementedException();
+            _repository.Insert(entry);
         }
 
-        public Task<IEnumerable<T>> GetAsync()
+        public IEnumerable<T> GetAsync()
         {
-            throw new NotImplementedException();
+            return _repository.GetAll();
         }
 
-        public Task<T> GetById(int id)
+        public T GetById(int id)
         {
-            throw new NotImplementedException();
+            return _repository.GetById(id);
         }
 
         public void Remove(int id)
         {
-            throw new NotImplementedException();
+            _repository.Delete(id);
         }
 
         public void Update(T entry)
         {
-            throw new NotImplementedException();
+            _repository.Update(entry);
         }
 
         public IEnumerable<T> Where(Expression<Func<T, bool>> exp)
         {
-            throw new NotImplementedException();
+            return _repository.Where(exp);
         }
     }
 }
