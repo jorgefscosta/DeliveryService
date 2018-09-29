@@ -13,6 +13,8 @@ namespace DeliveryService.DL.Services
 
         WarehouseResponse GetById(int id);
 
+        IEnumerable<WarehouseResponse> GetByName(string name);
+
         IEnumerable<WarehouseResponse> Where(Expression<Func<WarehouseResponse, bool>> exp);
 
         void Add(WarehouseResponse entry);

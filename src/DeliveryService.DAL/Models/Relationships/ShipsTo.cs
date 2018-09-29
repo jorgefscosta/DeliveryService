@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DeliveryService.DAL.Models
 {
-    public class Shipment : BaseEntity
+    public class ShipsTo : BaseEntity
     {
         [JsonProperty("time")]
         public int Time { get; set; }

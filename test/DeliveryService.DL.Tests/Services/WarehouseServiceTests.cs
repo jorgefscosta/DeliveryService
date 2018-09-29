@@ -16,11 +16,9 @@ namespace DeliveryService.DL.Tests.Services
 {
     public class WarehouseServiceTests : IClassFixture<TestFixture<Startup>>
     {
-
         private Mock<IBaseRepository<Warehouse>> Repository { get; }
 
         private IWarehouseService Service { get; }
-
 
         public WarehouseServiceTests(TestFixture<Startup> fixture)
         {
@@ -28,8 +26,8 @@ namespace DeliveryService.DL.Tests.Services
             {
                 new Warehouse
                 {
-                    Id = 10,
-                    Name = "J"
+                    Id = 1,
+                    Name = "Warehouse"
                 }
             };
 
@@ -40,12 +38,10 @@ namespace DeliveryService.DL.Tests.Services
 
             Repository.Setup(x => x.GetById(It.IsAny<int>()))
                 .Returns((int id) => entity.Find(s => s.Id == id));
-
-
+            
             Repository.Setup(x => x.Where(It.IsAny<Expression<Func<Warehouse, bool>>>()))
                 .Returns((Expression<Func<Warehouse, bool>> exp) => entity.AsQueryable().Where(exp));
-
-
+            
             Repository.Setup(x => x.Insert(It.IsAny<Warehouse>()))
                 .Callback((Warehouse label) => entity.Add(label));
 
@@ -53,11 +49,10 @@ namespace DeliveryService.DL.Tests.Services
                 .Callback((Warehouse label) => entity[entity.FindIndex(x => x.Id == label.Id)] = label);
 
             Repository.Setup(x => x.Delete(It.IsAny<int>()))
-            .Callback((Warehouse label) => entity.RemoveAt(entity.FindIndex(x => x.Id == label.Id)));
+            .Callback((int id) => entity.RemoveAt(entity.FindIndex(x => x.Id == id)));
 
             var mapper = (IMapper)fixture.Server.Host.Services.GetService(typeof(IMapper));
             var baseService = new BaseService<Warehouse>(Repository.Object);
-
 
             Service = new WarehouseService(baseService, mapper);
         }
@@ -83,22 +78,22 @@ namespace DeliveryService.DL.Tests.Services
 
             // Assert
             Repository.Verify(x => x.GetById(testId), Times.Once);
-            Assert.Equal("Jorge", l.Name);
+            Assert.Equal("Warehouse", l.Name);
         }
 
         [Fact]
         public void Can_Filter_Entities()
         {
             // Arrange
-            var WarehouseId = 1;
+            var warehouseId = 1;
 
             // Act
-            var filteredEntities = Service.Where(s => s.Id == WarehouseId).First();
+            var filteredEntities = Service.Where(s => s.Id == warehouseId).First();
 
             // Assert
-            Repository.Verify(x => x.Where(s => s.Id == WarehouseId), Times.Once);
-            Assert.Equal(WarehouseId, filteredEntities.Id);
-            Assert.Equal("Jorge", filteredEntities.Name);
+            Repository.Verify(x => x.Where(s => s.Id == warehouseId), Times.Once);
+            Assert.Equal(warehouseId, filteredEntities.Id);
+            Assert.Equal("Warehouse", filteredEntities.Name);
         }
 
         [Fact]
@@ -113,10 +108,8 @@ namespace DeliveryService.DL.Tests.Services
 
             // Act
             Service.Add(entity);
-
-
+            
             // Assert
-            Repository.Verify(x => x.GetById(It.IsAny<int>()), Times.Once);
             Repository.Verify(x => x.Insert(It.IsAny<Warehouse>()), Times.Once);
             var entities = Service.GetAsync();
             Assert.Equal(2, entities.Count());
@@ -130,16 +123,30 @@ namespace DeliveryService.DL.Tests.Services
             var entity = new WarehouseResponse
             {
                 Id = 1,
-                Name = "Warehouse 2"
+                Name = "New Name"
             };
             // Act
             Service.Update(entity);
 
             // Assert
-            Repository.Verify(x => x.GetById(It.IsAny<int>()), Times.Once);
             Repository.Verify(x => x.Update(It.IsAny<Warehouse>()), Times.Once);
             var entityResult = Service.GetById(1);
-            Assert.Equal("Warehouse 2 ", entityResult.Name);
+            Assert.Equal("New Name", entityResult.Name);
+        }
+        
+        [Fact]
+        public void Can_Remove_Entity()
+        {
+            // Arrange
+            var warehouseId = 1;
+
+            // Act
+            Service.Remove(warehouseId);
+
+            // Assert
+            Repository.Verify(x => x.Delete(It.IsAny<int>()), Times.Once);
+            var entityResult = Service.GetById(1);
+            Assert.Null(entityResult);
         }
 
     }

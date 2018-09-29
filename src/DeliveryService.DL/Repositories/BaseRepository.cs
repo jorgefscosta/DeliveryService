@@ -21,27 +21,36 @@ namespace DeliveryService.DL.Repositories
             _context = context;
         }
 
-        private string GetCypherNodeMap(string varName)
+        private string CypherNodeMap(string varName)
         {
             return string.Format("({0}:{1})", varName, typeof(T).Name);
         }
 
-        private string GetCypherNodeMapWithParam(string varName, string param)
+        private string CypherNodeMapWithParam(string varName, string param)
         {
-            return string.Format("({0}:{1} {{2}})", varName, typeof(T).Name,param);
+            return string.Format("({0}:{1} {{{2}}})", varName, typeof(T).Name,param);
+        }
+
+        private string CypherWhereClauseWithIntParam(string varName, string propName, int paramValue)
+        {
+            return string.Format("{0}.{1} = {2}", varName,propName, paramValue);
+        }
+        private string CypherWhereClauseWithStringParam(string varName, string propName, string paramValue)
+        {
+            return string.Format("{0}.{1} = '{2}'", varName, propName, paramValue);
         }
 
         private ICypherFluentQuery BaseQuery(string varName)
         {
             return _context.GraphDb.Cypher
-                    .Match(GetCypherNodeMap(varName));
+                    .Match(CypherNodeMap(varName));
         }
 
         private ICypherFluentQuery BaseQueryFilteredById(string varName, int id)
         {
-            return _context.GraphDb.Cypher
-                    .Match(GetCypherNodeMap(varName))
-                    .Where((T x) => x.Id == id);
+            return BaseQuery(varName).
+                   Where(CypherWhereClauseWithIntParam(varName,"Id",id));
+                    //.Where((T x) => x.Id == id);
         }
 
         public IEnumerable<T> GetAll()
@@ -60,10 +69,10 @@ namespace DeliveryService.DL.Repositories
 
         public void Insert(T entity)
         {
-           _context.GraphDb.Cypher
-                        .Create(GetCypherNodeMapWithParam("x", "y"))
-                        .WithParam("y", entity)
-                        .ExecuteWithoutResults();
+            var query = _context.GraphDb.Cypher
+                          .Create(CypherNodeMapWithParam("x", "y"))
+                          .WithParam("y", entity);
+            query.ExecuteWithoutResults();
         }
 
         public void Update(T entity)
@@ -76,9 +85,14 @@ namespace DeliveryService.DL.Repositories
 
         public void Delete(int id)
         {
-            BaseQueryFilteredById("x", id)
-            .Delete("x")
-            .ExecuteWithoutResults();
+            var query = _context.GraphDb.Cypher
+                        .OptionalMatch(string.Format("{0}-[{1}]-()", CypherNodeMap("x"), "r"))
+                        .Where(CypherWhereClauseWithIntParam("x", "Id", id))
+                        .Delete("r, x");
+            query.ExecuteWithoutResults();
+
+            //if no relationships exists
+            //BaseQueryFilteredById("x", id).Delete("x").ExecuteWithoutResults();
         }
 
         public IEnumerable<T> Where(Expression<Func<T, bool>> exp)

@@ -38,6 +38,12 @@ namespace DeliveryService.DL.Services
             return _mapper.Map<Warehouse, WarehouseResponse>(result);
         }
 
+        public IEnumerable<WarehouseResponse> GetByName(string name)
+        {
+            var result = _service.GetAsync().Where(x => x.Name == name);
+            return result.Select(t => _mapper.Map<Warehouse, WarehouseResponse>(t));
+        }
+
         public void Remove(int id)
         {
             _service.Remove(id);

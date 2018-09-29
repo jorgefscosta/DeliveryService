@@ -25,6 +25,7 @@ namespace DeliveryService.DL.Services
         }
         public IEnumerable<Route> GetRoutes(Warehouse startPoint, Warehouse endPoint, int limit = 10, string[] orderByParams = null, OrderByType order = OrderByType.Ascending)
         {
+            //cypher query
             /*
                 MATCH path = ((from:Warehouse)-[:SHIPS_TO*2..20]->(to:Warehouse))
                 WHERE from.name='A' and to.name='B'
@@ -47,7 +48,7 @@ namespace DeliveryService.DL.Services
                     StartPoint = Return.As<Warehouse>("from"),
                     EndPoint = Return.As<Warehouse>("to"),
                     RoutePoints = Return.As<IEnumerable<Warehouse>>("[x IN nodes(path) WHERE (x:Warehouse) | x]"),
-                    ShipDetails = Return.As<IEnumerable<Shipment>>("[y IN relationships(path) | y]"),
+                    ShipDetails = Return.As<IEnumerable<ShipsTo>>("[y IN relationships(path) | y]"),
                     Hops = Return.As<int>("length(path)"),
                     TotalCost = Return.As<int>("reduce(accumCost = 0, r IN relationships(path)| accumCost + r.cost)"),
                     TotalTime = Return.As<int>("reduce(accumTime = 0, r IN relationships(path)| accumTime + r.time)")
