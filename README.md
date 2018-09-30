@@ -20,6 +20,7 @@ Unit testing in DL layer.
 ```
 ## Before start:
 - Neo4j Database needs to be Running
+- With reference to the proposed exercise a script called "database setup.cypher" was provided to inject data on the database.
 - Update the appsettings.json file with your Neo4j database credentials. Below is an example
 ```
 "ConnectionStrings": {
