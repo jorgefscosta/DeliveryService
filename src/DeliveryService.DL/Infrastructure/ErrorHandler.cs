@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeliveryService.DL.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,7 +19,8 @@ namespace DeliveryService.DL.Infrastructure
                     return "The entity passed does not exists.";
                 case ErrorMessagesEnum.EntityDuplicate:
                     return "The entity passed already exists.";
-
+                case ErrorMessagesEnum.InvalidOption:
+                    return string.Format("The option passed is not valid. Only the follow options are valid: {0} ",RouteOptions.GetPathOptions());
                 default:
                     throw new ArgumentOutOfRangeException(nameof(errorNum), errorNum, null);
             }

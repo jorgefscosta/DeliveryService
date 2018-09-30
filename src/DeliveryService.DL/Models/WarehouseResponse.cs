@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DeliveryService.DL.Models
 {
-    public class WarehouseResponse : BaseModelResponse
+    public class WarehouseResponse : BaseModel
     {
         public string Name { get; set; }
     }

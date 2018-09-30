@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DeliveryService.DL.Models
 {
-    public class BaseModelResponse
+    public class BaseModel
     {
         [Required]
         public int Id { get; set; }

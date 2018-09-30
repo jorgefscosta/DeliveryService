@@ -34,7 +34,7 @@ namespace DeliveryService.API.Controllers
         [HttpGet]
         public IEnumerable<WarehouseResponse> Get()
         {
-            return _service.GetAsync();
+            return _service.Get();
         }
 
         // GET api/<controller>/5
@@ -49,7 +49,7 @@ namespace DeliveryService.API.Controllers
             return result;
         }
 
-        // GET api/<controller>/5
+        // GET api/<controller>/name/A
         [HttpGet("name/{name}")]
         public IEnumerable<WarehouseResponse> GetByName([Required]string name)
         {

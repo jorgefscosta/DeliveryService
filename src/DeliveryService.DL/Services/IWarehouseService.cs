@@ -1,4 +1,5 @@
-﻿using DeliveryService.DL.Models;
+﻿using DeliveryService.DAL.Models;
+using DeliveryService.DL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -9,7 +10,7 @@ namespace DeliveryService.DL.Services
 {
     public interface IWarehouseService
     {
-        IEnumerable<WarehouseResponse> GetAsync();
+        IEnumerable<WarehouseResponse> Get();
 
         WarehouseResponse GetById(int id);
 

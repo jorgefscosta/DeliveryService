@@ -19,6 +19,7 @@ using DeliveryService.DL.Infrastructure;
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using DeliveryService.DL.Helpers;
 
 namespace DeliveryService.API
 {
@@ -29,7 +30,8 @@ namespace DeliveryService.API
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", true, true);
+                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true);
 
             Configuration = builder.Build();
         }
@@ -44,10 +46,12 @@ namespace DeliveryService.API
             services.AddSingleton(new DataContext(Configuration["ConnectionStrings:Main:URI"],
                 Configuration["ConnectionStrings:Main:User"], Configuration["ConnectionStrings:Main:Pass"]));
 
+            services.AddSingleton(new RouteSetup(Configuration["RouteSetup:MinHops"], Configuration["RouteSetup:MaxHops"]));
             services.AddTransient<IErrorHandler, ErrorHandler>();
             services.AddTransient<IBaseRepository<Warehouse>, BaseRepository<Warehouse>>();
             services.AddTransient<IBaseService<Warehouse>, BaseService<Warehouse>>();
             services.AddTransient<IWarehouseService, WarehouseService>();
+            services.AddTransient<IRouteService, RouteService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

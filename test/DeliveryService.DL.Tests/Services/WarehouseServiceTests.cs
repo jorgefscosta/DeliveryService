@@ -61,7 +61,7 @@ namespace DeliveryService.DL.Tests.Services
         public void Can_Get_All()
         {
             // Act
-            var entities = Service.GetAsync();
+            var entities = Service.Get();
             // Assert
             Repository.Verify(x => x.GetAll(), Times.Once);
             Assert.Single(entities);
@@ -111,7 +111,7 @@ namespace DeliveryService.DL.Tests.Services
             
             // Assert
             Repository.Verify(x => x.Insert(It.IsAny<Warehouse>()), Times.Once);
-            var entities = Service.GetAsync();
+            var entities = Service.Get();
             Assert.Equal(2, entities.Count());
         }
 

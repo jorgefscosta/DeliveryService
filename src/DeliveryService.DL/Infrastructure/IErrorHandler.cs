@@ -13,6 +13,7 @@ namespace DeliveryService.DL.Infrastructure
         ModelValidation = 1,
         EntityNull = 2,
         EntityNotFound = 3,
-        EntityDuplicate = 4
+        EntityDuplicate = 4,
+        InvalidOption = 5
     }
 }

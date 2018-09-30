@@ -26,7 +26,7 @@ namespace DeliveryService.DL.Services
             _service.Add(_mapper.Map<WarehouseResponse, Warehouse>(entry));
         }
 
-        public IEnumerable<WarehouseResponse> GetAsync()
+        public IEnumerable<WarehouseResponse> Get()
         {
             var result = _service.GetAsync();
             return result.Select(t => _mapper.Map<Warehouse, WarehouseResponse>(t));

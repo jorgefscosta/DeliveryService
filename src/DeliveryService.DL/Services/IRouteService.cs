@@ -9,13 +9,23 @@ namespace DeliveryService.DL.Services
 {
     public interface IRouteService
     {
-        IEnumerable<Route> GetRoutes(Warehouse startPoint, Warehouse endPoint, int limit, string[] orderByParam, OrderByType order);
-        IEnumerable<Route> GetRouteByTime(Warehouse startPoint, Warehouse endPoint, OrderByType orderType);
-        IEnumerable<Route> GetRouteByCost(Warehouse startPoint, Warehouse endPoint, OrderByType orderType);
-        IEnumerable<Route> GetQuickestRoute(Warehouse startPoint, Warehouse endPoint);
-        IEnumerable<Route> GetSlownessRoute(Warehouse startPoint, Warehouse endPoint);
-        IEnumerable<Route> GetCheapestRoute(Warehouse startPoint, Warehouse endPoint);
-        IEnumerable<Route> GetShortestRoute(Warehouse startPoint, Warehouse endPoint);
+        IEnumerable<RouteResponse> Get();
+        IEnumerable<RouteResponse> Get(string originName, string destinyName);
+        IEnumerable<RouteResponse> Get(string originName, string destinyName, RouteOptionsModel options);
+        IEnumerable<ShipsToResponse> GetDirectRoute(string originName, string destinyName);
+        IEnumerable<RouteResponse> GetRoutesFrom(string originName);
+        IEnumerable<RouteResponse> GetRoutesTo(string destinyName);
+        RouteResponse GetBestRoute(string originName, string destinyName);
+        RouteResponse GetQuickestRoute(string originName, string destinyName);
+        RouteResponse GetSlownessRoute(string originName, string destinyName);
+        RouteResponse GetCheapestRoute(string originName, string destinyName);
+        RouteResponse GetCostliestRoute(string originName, string destinyName);
+        RouteResponse GetShortestRoute(string originName, string destinyName);
+
+        void Add(ShipsToResponse entity);
+        void Update(ShipsToResponse entity);
+        void Delete(ShipsToResponse entity);
+
 
     }
 }
