@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using AutoMapper;
 using DeliveryService.API.Models.Warehouses;
 using DeliveryService.DL.Infrastructure;
 using DeliveryService.DL.Models;
 using DeliveryService.DL.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Web.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

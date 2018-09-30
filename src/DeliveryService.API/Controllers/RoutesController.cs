@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using AutoMapper;
 using DeliveryService.API.Models.Routes;
 using DeliveryService.DL.Helpers;
 using DeliveryService.DL.Infrastructure;
 using DeliveryService.DL.Models;
 using DeliveryService.DL.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Neo4jClient.Cypher;
 
 namespace DeliveryService.API.Controllers
 {
@@ -30,18 +27,6 @@ namespace DeliveryService.API.Controllers
             _mapper = mapper;
             _errorHandler = errorHandler;
             _warehouseService = warehouseService;
-        }
-
-        private int GetWarehouseIdByName(string name)
-        {
-            try
-            {
-                return _warehouseService.GetByName(name).Single().Id;
-            }
-            catch(Exception)
-            {
-                throw new HttpRequestException(string.Format("{0}-{1}",name,_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNotFound)));
-            }
         }
 
         [HttpGet]
@@ -76,6 +61,7 @@ namespace DeliveryService.API.Controllers
             {
                 throw new HttpRequestException(string.Format(_errorHandler.GetErrorMessage(ErrorMessagesEnum.ModelValidation), ModelState.Values.First().Errors.First().ErrorMessage));
             }
+
             if (entity.Limit == 0)
             {
                 return _service.Get(origin, destiny);
@@ -109,8 +95,19 @@ namespace DeliveryService.API.Controllers
             }
         }
 
-        [HttpPost("{origin}/to/{destiny}")]
-        public void CreateRoute([Required]string origin, [Required] string destiny, [FromBody] ShipsToRequestModel entity)
+        private WarehouseResponse GetWarehouseByName(string name)
+        {
+            try
+            {
+                return _warehouseService.GetByName(name).Single();
+            }
+            catch (Exception)
+            {
+                throw new HttpRequestException(string.Format("{0}-{1}", name, _errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNotFound)));
+            }
+        }
+
+        private void ValidateRequest(string origin, string destiny, ShipsToRequestModel entity, out WarehouseResponse originWarehouse, out WarehouseResponse destinyWarehouse )
         {
             if (entity == null)
             {
@@ -120,10 +117,16 @@ namespace DeliveryService.API.Controllers
             {
                 throw new HttpRequestException(string.Format(_errorHandler.GetErrorMessage(ErrorMessagesEnum.ModelValidation), ModelState.Values.First().Errors.First().ErrorMessage));
             }
-
-            var originId = GetWarehouseIdByName(origin);
-            var destinyId = GetWarehouseIdByName(destiny);
-            if (_service.GetDirectRoute(originId, destinyId).Any())
+            originWarehouse = GetWarehouseByName(origin);
+            destinyWarehouse = GetWarehouseByName(destiny);
+        }
+        [HttpPost("{origin}/to/{destiny}")]
+        public void CreateRoute([Required]string origin, [Required] string destiny, [FromBody] ShipsToRequestModel entity)
+        {
+            WarehouseResponse originWarehouse, destinyWarehouse;
+            ValidateRequest(origin, destiny, entity, out originWarehouse, out destinyWarehouse);
+                        
+            if (_service.GetDirectRoute(originWarehouse.Id, destinyWarehouse.Id).Any())
             {
                 throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityDuplicate));
             }
@@ -132,8 +135,8 @@ namespace DeliveryService.API.Controllers
             {
                 Cost = entity.Cost,
                 Time = entity.Time,
-                OriginId = originId,
-                DestinyId = destinyId
+                Origin = originWarehouse,
+                Destiny = destinyWarehouse
             };
             _service.Create(request);
         }
@@ -141,17 +144,9 @@ namespace DeliveryService.API.Controllers
         [HttpPut("{origin}/to/{destiny}")]
         public void UpdateRoute([Required]string origin, [Required] string destiny, [FromBody] ShipsToRequestModel entity)
         {
-            if (entity == null)
-            {
-                throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNull));
-            }
-            if (!ModelState.IsValid)
-            {
-                throw new HttpRequestException(string.Format(_errorHandler.GetErrorMessage(ErrorMessagesEnum.ModelValidation), ModelState.Values.First().Errors.First().ErrorMessage));
-            }
-            var originId = GetWarehouseIdByName(origin);
-            var destinyId = GetWarehouseIdByName(destiny);
-            if (!_service.GetDirectRoute(originId, destinyId).Any())
+            WarehouseResponse originWarehouse, destinyWarehouse;
+            ValidateRequest(origin, destiny, entity, out originWarehouse, out destinyWarehouse);
+            if (!_service.GetDirectRoute(originWarehouse.Id, destinyWarehouse.Id).Any())
             {
                 throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNotFound));
             }
@@ -160,8 +155,8 @@ namespace DeliveryService.API.Controllers
             {
                 Cost = entity.Cost,
                 Time = entity.Time,
-                OriginId = originId,
-                DestinyId = destinyId
+                Origin = originWarehouse,
+                Destiny = destinyWarehouse
             };
             _service.Update(request);
         }
@@ -169,17 +164,17 @@ namespace DeliveryService.API.Controllers
         [HttpDelete("{origin}/to/{destiny}")]
         public void RemoveRoute([Required]string origin, [Required] string destiny)
         {
-            var originId = GetWarehouseIdByName(origin);
-            var destinyId = GetWarehouseIdByName(destiny);
-            if (!_service.GetDirectRoute(originId, destinyId).Any())
+            var originWarehouse = GetWarehouseByName(origin);
+            var destinyWarehouse = GetWarehouseByName(destiny);
+            if (!_service.GetDirectRoute(originWarehouse.Id, destinyWarehouse.Id).Any())
             {
                 throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNotFound));
             }
 
             var request = new ShipsToRequest
             {
-                OriginId = originId,
-                DestinyId = destinyId
+                Origin = originWarehouse,
+                Destiny = destinyWarehouse
             };
             _service.Remove(request);
         }

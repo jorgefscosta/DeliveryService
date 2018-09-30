@@ -1,7 +1,4 @@
 ﻿using Neo4jClient.Cypher;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DeliveryService.DL.Models
 {

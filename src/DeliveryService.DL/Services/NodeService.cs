@@ -1,18 +1,14 @@
 ﻿using DeliveryService.DAL.Models;
 using DeliveryService.DL.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeliveryService.DL.Services
 {
-    public class BaseService<T> : IBaseService<T> where T : BaseEntity
+    public class NodeService<T> : INodeService<T> where T : NodeEntity
     {
-        private readonly IBaseRepository<T> _repository;
+        private readonly INodeRepository<T> _repository;
 
-        public BaseService(IBaseRepository<T> repository)
+        public NodeService(INodeRepository<T> repository)
         {
             _repository = repository;
         }

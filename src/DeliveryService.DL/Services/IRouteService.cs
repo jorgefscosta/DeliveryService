@@ -1,9 +1,5 @@
-﻿using DeliveryService.DAL.Models;
-using DeliveryService.DL.Models;
-using Neo4jClient.Cypher;
-using System;
+﻿using DeliveryService.DL.Models;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DeliveryService.DL.Services
 {

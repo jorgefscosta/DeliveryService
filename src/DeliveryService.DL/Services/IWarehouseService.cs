@@ -1,10 +1,5 @@
-﻿using DeliveryService.DAL.Models;
-using DeliveryService.DL.Models;
-using System;
+﻿using DeliveryService.DL.Models;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeliveryService.DL.Services
 {

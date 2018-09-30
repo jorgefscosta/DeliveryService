@@ -1,17 +1,14 @@
 ﻿using DeliveryService.DAL.Contexts;
-using System;
 using System.Collections.Generic;
 using DeliveryService.DAL.Models.Relationships;
-using System.Text;
 using DeliveryService.DAL.Models;
 using DeliveryService.DL.Helpers;
 using Neo4jClient.Cypher;
-using System.Linq;
 
 namespace DeliveryService.DL.Repositories
 {
-    public class RelationshipRepository<T, TLeft, TRight> : IRelationshipRepository<T>
-        where T : RelationshipEntity where TLeft : BaseEntity where TRight : BaseEntity
+    public class RelationshipRepository<T, TLeft, TRight> : IRelationshipRepository<T,TLeft,TRight>
+        where T : RelationshipEntity where TLeft : NodeEntity where TRight : NodeEntity
     {
         private readonly DataContext _context;
 
@@ -43,42 +40,42 @@ namespace DeliveryService.DL.Repositories
             return query.Results;
         }
 
-        public void Insert(T entity)
+        public void Insert(T entity, TLeft originNode, TRight destinyNode)
         {
             var origin = CypherQueries.CypherNodeMap<TLeft>("from");
             var destiny = CypherQueries.CypherNodeMap<TRight>("to");
             _context.GraphDb.Cypher
                 .Match(origin, destiny)
-                .Where((TLeft from) => from.Id == entity.OriginId)
-                .AndWhere((TRight to) => to.Id == entity.DestinyId)
+                .Where((TLeft from) => from.Id == originNode.Id)
+                .AndWhere((TRight to) => to.Id == destinyNode.Id)
                 .CreateUnique(string.Format("(from)-[:{0} {{{1}}}]->(to)", typeof(T).Name, "params"))
                 .WithParam("params", entity)
                 .ExecuteWithoutResults();
         }
 
-        private ICypherFluentQuery BaseRelationshipMap(T entity, string relVarName)
+        private ICypherFluentQuery BaseRelationshipMap(T entity, TLeft originNode, TRight destinyNode, string relVarName)
         {
             var o = CypherQueries.CypherNodeMap<TLeft>("from");
             var d = CypherQueries.CypherNodeMap<TRight>("to");
             string inputString = string.Format("{0}-[{2}: {3}]->{1}",o, d, relVarName, typeof(T).Name);
             return _context.GraphDb.Cypher
                 .Match(inputString)
-                .Where((TLeft from) => from.Id == entity.OriginId)
-                .AndWhere((TRight to) => to.Id == entity.DestinyId);
+                .Where((TLeft from) => from.Id == originNode.Id)
+                .AndWhere((TRight to) => to.Id == destinyNode.Id);
         }
 
-        public void Update(T entity)
+        public void Update(T entity, TLeft originNode, TRight destinyNode)
         {
-            BaseRelationshipMap(entity, "r")
+            BaseRelationshipMap(entity,originNode,destinyNode, "r")
                 .Set("r = {params}")
                 .WithParam("params", entity)
                 .ExecuteWithoutResults();
         }
 
 
-        public void Delete(T entity)
+        public void Delete(T entity, TLeft originNode, TRight destinyNode)
         {
-            BaseRelationshipMap(entity, "r")
+            BaseRelationshipMap(entity,originNode,destinyNode, "r")
                 .Delete("r")
                 .ExecuteWithoutResults();
         }

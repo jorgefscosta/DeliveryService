@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using DeliveryService.DAL.Models;
 using DeliveryService.DL.Models;
 using AutoMapper;
@@ -12,10 +8,10 @@ namespace DeliveryService.DL.Services
 {
     public class WarehouseService : IWarehouseService
     {
-        private readonly IBaseService<Warehouse> _service;
+        private readonly INodeService<Warehouse> _service;
         private readonly IMapper _mapper;
 
-        public WarehouseService(IBaseService<Warehouse> service, IMapper mapper)
+        public WarehouseService(INodeService<Warehouse> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;

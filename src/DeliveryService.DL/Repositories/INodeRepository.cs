@@ -1,12 +1,9 @@
 ﻿using DeliveryService.DAL.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace DeliveryService.DL.Repositories
 {
-    public interface IBaseRepository<T> where T : BaseEntity
+    public interface INodeRepository<T> where T : NodeEntity
     {
         IEnumerable<T> GetAll();
         T GetById(int id);

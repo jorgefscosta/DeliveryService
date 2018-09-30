@@ -2,13 +2,10 @@
 using DeliveryService.DAL.Models;
 using DeliveryService.DL.Repositories;
 using DeliveryService.DL.Services;
-using System;
 using System.Collections.Generic;
 using Xunit;
 using Moq;
 using AutoMapper;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
 using System.Linq;
 using DeliveryService.DL.Models;
 
@@ -16,7 +13,7 @@ namespace DeliveryService.DL.Tests.Services
 {
     public class WarehouseServiceTests : IClassFixture<TestFixture<Startup>>
     {
-        private Mock<IBaseRepository<Warehouse>> Repository { get; }
+        private Mock<INodeRepository<Warehouse>> Repository { get; }
 
         private IWarehouseService Service { get; }
 
@@ -31,7 +28,7 @@ namespace DeliveryService.DL.Tests.Services
                 }
             };
 
-            Repository = new Mock<IBaseRepository<Warehouse>>();
+            Repository = new Mock<INodeRepository<Warehouse>>();
 
             Repository.Setup(x => x.GetAll())
                 .Returns(entity);
@@ -49,7 +46,7 @@ namespace DeliveryService.DL.Tests.Services
             .Callback((int id) => entity.RemoveAt(entity.FindIndex(x => x.Id == id)));
 
             var mapper = (IMapper)fixture.Server.Host.Services.GetService(typeof(IMapper));
-            var baseService = new BaseService<Warehouse>(Repository.Object);
+            var baseService = new NodeService<Warehouse>(Repository.Object);
 
             Service = new WarehouseService(baseService, mapper);
         }

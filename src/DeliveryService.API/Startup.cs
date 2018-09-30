@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DeliveryService.DAL.Contexts;
+﻿using DeliveryService.DAL.Contexts;
 using DeliveryService.DAL.Models;
 using DeliveryService.DL.Repositories;
 using DeliveryService.DL.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using AutoMapper;
 using DeliveryService.DL.Infrastructure;
 using System.Net;
@@ -48,10 +41,10 @@ namespace DeliveryService.API
 
             services.AddSingleton(new RouteSetup(Configuration["RouteSetup:MinHops"], Configuration["RouteSetup:MaxHops"]));
             services.AddTransient<IErrorHandler, ErrorHandler>();
-            services.AddTransient<IBaseRepository<Warehouse>, BaseRepository<Warehouse>>();
-            services.AddTransient<IBaseService<Warehouse>, BaseService<Warehouse>>();
+            services.AddTransient<INodeRepository<Warehouse>, NodeRepository<Warehouse>>();
+            services.AddTransient<INodeService<Warehouse>, NodeService<Warehouse>>();
             services.AddTransient<IWarehouseService, WarehouseService>();
-            services.AddTransient<IRelationshipRepository<SHIPS_TO>, RelationshipRepository<SHIPS_TO,Warehouse,Warehouse>>();
+            services.AddTransient<IRelationshipRepository<SHIPS_TO,Warehouse,Warehouse>, RelationshipRepository<SHIPS_TO,Warehouse,Warehouse>>();
             services.AddTransient<IRouteService, RouteService>();
         }
 

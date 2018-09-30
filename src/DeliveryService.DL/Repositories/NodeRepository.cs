@@ -1,22 +1,18 @@
 ﻿using DeliveryService.DAL.Contexts;
 using DeliveryService.DAL.Models;
-using Neo4jClient;
+using DeliveryService.DL.Helpers;
 using Neo4jClient.Cypher;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeliveryService.DL.Repositories
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T: BaseEntity
+    public class NodeRepository<T> : INodeRepository<T> where T: NodeEntity
     {
         private readonly DataContext _context;
 
         //TODO: ErrorHandler
-        public BaseRepository(DataContext context)
+        public NodeRepository(DataContext context)
         {
             _context = context;
         }
@@ -24,20 +20,6 @@ namespace DeliveryService.DL.Repositories
         private string CypherNodeMap(string varName)
         {
             return string.Format("({0}:{1})", varName, typeof(T).Name);
-        }
-
-        private string CypherNodeMapWithParam(string varName, string param)
-        {
-            return string.Format("({0}:{1} {{{2}}})", varName, typeof(T).Name,param);
-        }
-
-        private string CypherWhereClauseWithIntParam(string varName, string propName, int paramValue)
-        {
-            return string.Format("{0}.{1} = {2}", varName,propName, paramValue);
-        }
-        private string CypherWhereClauseWithStringParam(string varName, string propName, string paramValue)
-        {
-            return string.Format("{0}.{1} = '{2}'", varName, propName, paramValue);
         }
 
         private ICypherFluentQuery BaseQuery(string varName)
@@ -49,8 +31,7 @@ namespace DeliveryService.DL.Repositories
         private ICypherFluentQuery BaseQueryFilteredById(string varName, int id)
         {
             return BaseQuery(varName).
-                   Where(CypherWhereClauseWithIntParam(varName,"Id",id));
-                    //.Where((T x) => x.Id == id);
+                   Where(CypherQueries.CypherWhereClauseWithIntParam(varName,"Id",id));
         }
 
         public IEnumerable<T> GetAll()
@@ -70,7 +51,7 @@ namespace DeliveryService.DL.Repositories
         public void Insert(T entity)
         {
             var query = _context.GraphDb.Cypher
-                          .Create(CypherNodeMapWithParam("x", "y"))
+                          .Create(CypherQueries.CypherNodeMapWithParam<T>("x", "y"))
                           .WithParam("y", entity);
             query.ExecuteWithoutResults();
         }
@@ -87,7 +68,7 @@ namespace DeliveryService.DL.Repositories
         {
             var query = _context.GraphDb.Cypher
                         .OptionalMatch(string.Format("{0}-[{1}]-()", CypherNodeMap("x"), "r"))
-                        .Where(CypherWhereClauseWithIntParam("x", "Id", id))
+                        .Where(CypherQueries.CypherWhereClauseWithIntParam("x", "Id", id))
                         .Delete("r, x");
             query.ExecuteWithoutResults();
 

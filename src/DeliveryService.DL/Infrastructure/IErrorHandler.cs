@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DeliveryService.DL.Infrastructure
+﻿namespace DeliveryService.DL.Infrastructure
 {
     public interface IErrorHandler
     {

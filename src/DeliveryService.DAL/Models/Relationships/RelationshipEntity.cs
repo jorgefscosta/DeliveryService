@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DeliveryService.DAL.Models.Relationships
+﻿namespace DeliveryService.DAL.Models.Relationships
 {
+    //Generic class for all Relationships on DB
     public class RelationshipEntity
     {
-        public int OriginId { get; set; }
-        public int DestinyId { get; set; }
     }
 }
