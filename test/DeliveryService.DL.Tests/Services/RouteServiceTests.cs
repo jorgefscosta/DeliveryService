@@ -85,8 +85,8 @@ namespace DeliveryService.DL.Tests.Services
 
             // Assert
             Repository.Verify(x => x.GetById(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
-            Assert.Equal(1, l.OriginId);
-            Assert.Equal(2, l.DestinyId);
+            Assert.Equal(1, l.Cost);
+            Assert.Equal(1, l.Time);
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace DeliveryService.DL.Tests.Services
         public void Can_Insert_Entity()
         {
             // Arrange
-            var entity = new ShipsToResponse
+            var entity = new ShipsToRequest
             {
                 OriginId = 1,
                 DestinyId = 4,
@@ -130,7 +130,7 @@ namespace DeliveryService.DL.Tests.Services
         public void Can_Update_Entity()
         {
             // Arrange
-            var entity = new ShipsToResponse
+            var entity = new ShipsToRequest
             {
                 OriginId = 1,
                 DestinyId = 3,
@@ -145,15 +145,13 @@ namespace DeliveryService.DL.Tests.Services
             var entityResult = Service.GetDirectRoute(entity.OriginId,entity.DestinyId).SingleOrDefault();
             Assert.Equal(50, entityResult.Cost);
             Assert.Equal(100, entityResult.Time);
-            Assert.Equal(1, entityResult.OriginId);
-            Assert.Equal(3, entityResult.DestinyId);
         }
 
         [Fact]
         public void Can_Remove_Entity()
         {
             // Arrange
-            var entity = new ShipsToResponse
+            var entity = new ShipsToRequest
             {
                 OriginId = 1,
                 DestinyId = 3,

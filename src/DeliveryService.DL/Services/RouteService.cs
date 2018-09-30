@@ -174,7 +174,7 @@ namespace DeliveryService.DL.Services
             };
         }
 
-        public void Create(ShipsToResponse entity)
+        public void Create(ShipsToRequest entity)
         {
             //_context.GraphDb.Cypher
             //    .Match("(from:Warehouse)", "(to:Warehouse)")
@@ -183,10 +183,10 @@ namespace DeliveryService.DL.Services
             //    .CreateUnique("(from)-[:SHIPS_TO {params}]->(to)")
             //    .WithParam("params", ConvertShipsTo(entity.Time, entity.Cost))
             //    .ExecuteWithoutResults();
-            _repository.Insert(_mapper.Map<ShipsToResponse, SHIPS_TO>(entity));
+            _repository.Insert(_mapper.Map<ShipsToRequest, SHIPS_TO>(entity));
         }
 
-        public void Update(ShipsToResponse entity)
+        public void Update(ShipsToRequest entity)
         {
             //_context.GraphDb.Cypher
             //    .Match("(from:Warehouse)-[r:SHIPS_TO]->(to:Warehouse)")
@@ -195,9 +195,9 @@ namespace DeliveryService.DL.Services
             //    .Set("r = {params}")
             //    .WithParam("params", ConvertShipsTo(entity.Time, entity.Cost))
             //    .ExecuteWithoutResults();
-            _repository.Update(_mapper.Map<ShipsToResponse, SHIPS_TO>(entity));
+            _repository.Update(_mapper.Map<ShipsToRequest, SHIPS_TO>(entity));
         }
-        public void Remove(ShipsToResponse entity)
+        public void Remove(ShipsToRequest entity)
         {
             //_context.GraphDb.Cypher
             //    .Match("(from:Warehouse)-[r:SHIPS_TO]->(to:Warehouse)")
@@ -205,7 +205,7 @@ namespace DeliveryService.DL.Services
             //    .AndWhere((Warehouse to) => to.Name == entity.DestinyName)
             //    .Delete("r")
             //    .ExecuteWithoutResults();
-            _repository.Delete(_mapper.Map<ShipsToResponse, SHIPS_TO>(entity));
+            _repository.Delete(_mapper.Map<ShipsToRequest, SHIPS_TO>(entity));
         }
     }
 }

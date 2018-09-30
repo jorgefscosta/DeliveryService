@@ -128,7 +128,7 @@ namespace DeliveryService.API.Controllers
                 throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityDuplicate));
             }
 
-            var request = new ShipsToResponse
+            var request = new ShipsToRequest
             {
                 Cost = entity.Cost,
                 Time = entity.Time,
@@ -156,7 +156,7 @@ namespace DeliveryService.API.Controllers
                 throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNotFound));
             }
 
-            var request = new ShipsToResponse
+            var request = new ShipsToRequest
             {
                 Cost = entity.Cost,
                 Time = entity.Time,
@@ -176,7 +176,7 @@ namespace DeliveryService.API.Controllers
                 throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNotFound));
             }
 
-            var request = new ShipsToResponse
+            var request = new ShipsToRequest
             {
                 OriginId = originId,
                 DestinyId = destinyId

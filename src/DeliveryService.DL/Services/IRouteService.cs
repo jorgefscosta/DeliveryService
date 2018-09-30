@@ -22,9 +22,9 @@ namespace DeliveryService.DL.Services
         RouteResponse GetCostliestRoute(string originName, string destinyName);
         RouteResponse GetShortestRoute(string originName, string destinyName);
 
-        void Create(ShipsToResponse entity);
-        void Update(ShipsToResponse entity);
-        void Remove(ShipsToResponse entity);
+        void Create(ShipsToRequest entity);
+        void Update(ShipsToRequest entity);
+        void Remove(ShipsToRequest entity);
 
 
     }
