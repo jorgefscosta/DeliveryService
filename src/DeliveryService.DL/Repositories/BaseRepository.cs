@@ -94,10 +94,5 @@ namespace DeliveryService.DL.Repositories
             //if no relationships exists
             //BaseQueryFilteredById("x", id).Delete("x").ExecuteWithoutResults();
         }
-
-        public IEnumerable<T> Where(Expression<Func<T, bool>> exp)
-        {
-            return BaseQuery("x").Where(exp).Return<T>("x").Results;            
-        }
     }
 }

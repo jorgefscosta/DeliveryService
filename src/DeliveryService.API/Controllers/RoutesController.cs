@@ -32,16 +32,20 @@ namespace DeliveryService.API.Controllers
             _warehouseService = warehouseService;
         }
 
-        private void ValidateWarehouseByName(string name)
+        private int GetWarehouseIdByName(string name)
         {
-            if (!_warehouseService.GetByName(name).Any())
+            try
+            {
+                return _warehouseService.GetByName(name).Single().Id;
+            }
+            catch(Exception)
             {
                 throw new HttpRequestException(string.Format("{0}-{1}",name,_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNotFound)));
             }
         }
 
         [HttpGet]
-        public IEnumerable<RouteResponse> Get()
+        public IEnumerable<ShipsToResponse> Get()
         {
             return _service.Get();
         }
@@ -116,9 +120,10 @@ namespace DeliveryService.API.Controllers
             {
                 throw new HttpRequestException(string.Format(_errorHandler.GetErrorMessage(ErrorMessagesEnum.ModelValidation), ModelState.Values.First().Errors.First().ErrorMessage));
             }
-            ValidateWarehouseByName(origin);
-            ValidateWarehouseByName(destiny);
-            if (_service.GetDirectRoute(origin, destiny).Any())
+
+            var originId = GetWarehouseIdByName(origin);
+            var destinyId = GetWarehouseIdByName(destiny);
+            if (_service.GetDirectRoute(originId, destinyId).Any())
             {
                 throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityDuplicate));
             }
@@ -127,10 +132,10 @@ namespace DeliveryService.API.Controllers
             {
                 Cost = entity.Cost,
                 Time = entity.Time,
-                OriginName = origin,
-                DestinyName = destiny
+                OriginId = originId,
+                DestinyId = destinyId
             };
-            _service.Add(request);
+            _service.Create(request);
         }
 
         [HttpPut("{origin}/to/{destiny}")]
@@ -144,9 +149,9 @@ namespace DeliveryService.API.Controllers
             {
                 throw new HttpRequestException(string.Format(_errorHandler.GetErrorMessage(ErrorMessagesEnum.ModelValidation), ModelState.Values.First().Errors.First().ErrorMessage));
             }
-            ValidateWarehouseByName(origin);
-            ValidateWarehouseByName(destiny);
-            if (!_service.GetDirectRoute(origin, destiny).Any())
+            var originId = GetWarehouseIdByName(origin);
+            var destinyId = GetWarehouseIdByName(destiny);
+            if (!_service.GetDirectRoute(originId, destinyId).Any())
             {
                 throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNotFound));
             }
@@ -155,8 +160,8 @@ namespace DeliveryService.API.Controllers
             {
                 Cost = entity.Cost,
                 Time = entity.Time,
-                OriginName = origin,
-                DestinyName = destiny
+                OriginId = originId,
+                DestinyId = destinyId
             };
             _service.Update(request);
         }
@@ -164,19 +169,19 @@ namespace DeliveryService.API.Controllers
         [HttpDelete("{origin}/to/{destiny}")]
         public void RemoveRoute([Required]string origin, [Required] string destiny)
         {
-            ValidateWarehouseByName(origin);
-            ValidateWarehouseByName(destiny);
-            if (!_service.GetDirectRoute(origin, destiny).Any())
+            var originId = GetWarehouseIdByName(origin);
+            var destinyId = GetWarehouseIdByName(destiny);
+            if (!_service.GetDirectRoute(originId, destinyId).Any())
             {
                 throw new HttpRequestException(_errorHandler.GetErrorMessage(ErrorMessagesEnum.EntityNotFound));
             }
 
             var request = new ShipsToResponse
             {
-                OriginName = origin,
-                DestinyName = destiny
+                OriginId = originId,
+                DestinyId = destinyId
             };
-            _service.Delete(request);
+            _service.Remove(request);
         }
 
 

@@ -14,8 +14,6 @@ namespace DeliveryService.DL.Services
 
         T GetById(int id);
 
-        IEnumerable<T> Where(Expression<Func<T, bool>> exp);
-
         void Add(T entry);
 
         void Update(T entry);

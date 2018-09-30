@@ -9,10 +9,10 @@ namespace DeliveryService.DL.Services
 {
     public interface IRouteService
     {
-        IEnumerable<RouteResponse> Get();
+        IEnumerable<ShipsToResponse> Get();
         IEnumerable<RouteResponse> Get(string originName, string destinyName);
         IEnumerable<RouteResponse> Get(string originName, string destinyName, RouteOptionsModel options);
-        IEnumerable<ShipsToResponse> GetDirectRoute(string originName, string destinyName);
+        IEnumerable<ShipsToResponse> GetDirectRoute(int originId, int destinyId);
         IEnumerable<RouteResponse> GetRoutesFrom(string originName);
         IEnumerable<RouteResponse> GetRoutesTo(string destinyName);
         RouteResponse GetBestRoute(string originName, string destinyName);
@@ -22,9 +22,9 @@ namespace DeliveryService.DL.Services
         RouteResponse GetCostliestRoute(string originName, string destinyName);
         RouteResponse GetShortestRoute(string originName, string destinyName);
 
-        void Add(ShipsToResponse entity);
+        void Create(ShipsToResponse entity);
         void Update(ShipsToResponse entity);
-        void Delete(ShipsToResponse entity);
+        void Remove(ShipsToResponse entity);
 
 
     }

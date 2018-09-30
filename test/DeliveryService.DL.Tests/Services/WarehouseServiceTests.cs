@@ -38,10 +38,7 @@ namespace DeliveryService.DL.Tests.Services
 
             Repository.Setup(x => x.GetById(It.IsAny<int>()))
                 .Returns((int id) => entity.Find(s => s.Id == id));
-            
-            Repository.Setup(x => x.Where(It.IsAny<Expression<Func<Warehouse, bool>>>()))
-                .Returns((Expression<Func<Warehouse, bool>> exp) => entity.AsQueryable().Where(exp));
-            
+
             Repository.Setup(x => x.Insert(It.IsAny<Warehouse>()))
                 .Callback((Warehouse label) => entity.Add(label));
 
@@ -79,21 +76,6 @@ namespace DeliveryService.DL.Tests.Services
             // Assert
             Repository.Verify(x => x.GetById(testId), Times.Once);
             Assert.Equal("Warehouse", l.Name);
-        }
-
-        [Fact]
-        public void Can_Filter_Entities()
-        {
-            // Arrange
-            var warehouseId = 1;
-
-            // Act
-            var filteredEntities = Service.Where(s => s.Id == warehouseId).First();
-
-            // Assert
-            Repository.Verify(x => x.Where(s => s.Id == warehouseId), Times.Once);
-            Assert.Equal(warehouseId, filteredEntities.Id);
-            Assert.Equal("Warehouse", filteredEntities.Name);
         }
 
         [Fact]

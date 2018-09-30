@@ -41,10 +41,5 @@ namespace DeliveryService.DL.Services
         {
             _repository.Update(entry);
         }
-
-        public IEnumerable<T> Where(Expression<Func<T, bool>> exp)
-        {
-            return _repository.Where(exp);
-        }
     }
 }

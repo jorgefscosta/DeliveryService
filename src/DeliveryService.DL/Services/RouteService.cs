@@ -16,12 +16,15 @@ namespace DeliveryService.DL.Services
     {
         private readonly DataContext _context;
         private readonly RouteSetup _setup;
-        private readonly IWarehouseService _warehouseService;
+        private readonly IRelationshipRepository<SHIPS_TO> _repository;
+        private readonly IMapper _mapper;
 
-        public RouteService(DataContext context, RouteSetup setup)
+        public RouteService(DataContext context, RouteSetup setup, IRelationshipRepository<SHIPS_TO> repository, IMapper mapper)
         {
             _context = context;
             _setup = setup;
+            _repository = repository;
+            _mapper = mapper;
         }
         
         #region Get
@@ -39,20 +42,23 @@ namespace DeliveryService.DL.Services
                 .Match(inputString);
         }
 
-        public IEnumerable<ShipsToResponse> GetDirectRoute(string originName, string destinyName)
+        public IEnumerable<ShipsToResponse> GetDirectRoute(int originId, int destinyId)
         {
-            var inputString = "path=((from:Warehouse)-[r:SHIPS_TO]->(to:Warehouse))";
-            return _context.GraphDb.Cypher
-                    .Match(inputString)
-                    .Where((Warehouse from) => from.Name == originName)
-                    .AndWhere((Warehouse to) => to.Name == destinyName)
-                    .Return(() => new ShipsToResponse
-                    {
-                        Cost = Return.As<int>("r.cost"),
-                        Time = Return.As<int>("r.time"),
-                        OriginName = Return.As<string>("from.name"),
-                        DestinyName = Return.As<string>("to.name"),
-                    }).Results;
+            var result = _repository.GetById(originId,destinyId);
+            return result.Select(t => _mapper.Map<SHIPS_TO, ShipsToResponse>(t));
+
+            //var inputString = "path=((from:Warehouse)-[r:SHIPS_TO]->(to:Warehouse))";
+            //return _context.GraphDb.Cypher
+            //        .Match(inputString)
+            //        .Where((Warehouse from) => from.Name == originName)
+            //        .AndWhere((Warehouse to) => to.Name == destinyName)
+            //        .Return(() => new ShipsToResponse
+            //        {
+            //            Cost = Return.As<int>("r.cost"),
+            //            Time = Return.As<int>("r.time"),
+            //            OriginId = Return.As<int>("from.id"),
+            //            DestinyId = Return.As<int>("to.id"),
+            //        }).Results;
         }
 
         private ICypherFluentQuery<RouteResponse> ReturnRouteResponse(ICypherFluentQuery query)
@@ -62,15 +68,17 @@ namespace DeliveryService.DL.Services
                 Origin = Return.As<Warehouse>("from"),
                 Destiny = Return.As<Warehouse>("to"),
                 RoutePoints = Return.As<IEnumerable<Warehouse>>("[x IN nodes(path) WHERE (x:Warehouse) | x]"),
-                ShipDetails = Return.As<IEnumerable<ShipsTo>>("[y IN relationships(path) | y]"),
+                ShipDetails = Return.As<IEnumerable<SHIPS_TO>>("[y IN relationships(path) | y]"),
                 Hops = Return.As<int>("length(path)"),
                 TotalCost = Return.As<int>("reduce(accumCost = 0, r IN relationships(path)| accumCost + r.cost)"),
                 TotalTime = Return.As<int>("reduce(accumTime = 0, r IN relationships(path)| accumTime + r.time)")
             });
         }
-        public IEnumerable<RouteResponse> Get()
+        public IEnumerable<ShipsToResponse> Get()
         {
-            return ReturnRouteResponse(BaseQuery()).Results;
+            var result = _repository.GetAll();
+            return result.Select(t => _mapper.Map<SHIPS_TO, ShipsToResponse>(t));
+            //return ReturnRouteResponse(BaseQuery()).Results;
         }
         public IEnumerable<RouteResponse> Get(string originName, string destinyName)
         {
@@ -157,44 +165,47 @@ namespace DeliveryService.DL.Services
         }
         #endregion
 
-        private ShipsTo ConvertShipsTo(int time, int cost)
+        private SHIPS_TO ConvertShipsTo(int time, int cost)
         {
-            return new ShipsTo
+            return new SHIPS_TO
             {
                 Cost = cost,
                 Time = time,
             };
         }
 
-        public void Add(ShipsToResponse entity)
+        public void Create(ShipsToResponse entity)
         {
-            _context.GraphDb.Cypher
-                .Match("(from:Warehouse)", "(to:Warehouse)")
-                .Where((Warehouse from) => from.Name == entity.OriginName)
-                .AndWhere((Warehouse to) => to.Name == entity.DestinyName)
-                .CreateUnique("(from)-[:SHIPS_TO {params}]->(to)")
-                .WithParam("params", ConvertShipsTo(entity.Time, entity.Cost))
-                .ExecuteWithoutResults();
+            //_context.GraphDb.Cypher
+            //    .Match("(from:Warehouse)", "(to:Warehouse)")
+            //    .Where((Warehouse from) => from.Name == entity.OriginId)
+            //    .AndWhere((Warehouse to) => to.Name == entity.DestinyId)
+            //    .CreateUnique("(from)-[:SHIPS_TO {params}]->(to)")
+            //    .WithParam("params", ConvertShipsTo(entity.Time, entity.Cost))
+            //    .ExecuteWithoutResults();
+            _repository.Insert(_mapper.Map<ShipsToResponse, SHIPS_TO>(entity));
         }
 
         public void Update(ShipsToResponse entity)
         {
-            _context.GraphDb.Cypher
-                .Match("(from:Warehouse)-[r:SHIPS_TO]->(to:Warehouse)")
-                .Where((Warehouse from) => from.Name == entity.OriginName)
-                .AndWhere((Warehouse to) => to.Name == entity.DestinyName)
-                .Set("r = {params}")
-                .WithParam("params", ConvertShipsTo(entity.Time, entity.Cost))
-                .ExecuteWithoutResults();
+            //_context.GraphDb.Cypher
+            //    .Match("(from:Warehouse)-[r:SHIPS_TO]->(to:Warehouse)")
+            //    .Where((Warehouse from) => from.Name == entity.OriginId)
+            //    .AndWhere((Warehouse to) => to.Name == entity.DestinyId)
+            //    .Set("r = {params}")
+            //    .WithParam("params", ConvertShipsTo(entity.Time, entity.Cost))
+            //    .ExecuteWithoutResults();
+            _repository.Update(_mapper.Map<ShipsToResponse, SHIPS_TO>(entity));
         }
-        public void Delete(ShipsToResponse entity)
+        public void Remove(ShipsToResponse entity)
         {
-            _context.GraphDb.Cypher
-                .Match("(from:Warehouse)-[r:SHIPS_TO]->(to:Warehouse)")
-                .Where((Warehouse from) => from.Name == entity.OriginName)
-                .AndWhere((Warehouse to) => to.Name == entity.DestinyName)
-                .Delete("r")
-                .ExecuteWithoutResults();
+            //_context.GraphDb.Cypher
+            //    .Match("(from:Warehouse)-[r:SHIPS_TO]->(to:Warehouse)")
+            //    .Where((Warehouse from) => from.Name == entity.OriginName)
+            //    .AndWhere((Warehouse to) => to.Name == entity.DestinyName)
+            //    .Delete("r")
+            //    .ExecuteWithoutResults();
+            _repository.Delete(_mapper.Map<ShipsToResponse, SHIPS_TO>(entity));
         }
     }
 }

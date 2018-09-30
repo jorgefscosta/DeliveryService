@@ -53,10 +53,5 @@ namespace DeliveryService.DL.Services
         {
             _service.Update(_mapper.Map<WarehouseResponse, Warehouse>(entry));
         }
-
-        public IEnumerable<WarehouseResponse> Where(Expression<Func<WarehouseResponse, bool>> exp)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

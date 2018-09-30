@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DeliveryService.DL.Models
+namespace DeliveryService.DAL.Models.Relationships
 {
-    public class ShipsToResponse
+    public class RelationshipEntity
     {
         public int OriginId { get; set; }
         public int DestinyId { get; set; }
-        public int Time { get; set; }
-        public int Cost { get; set; }
     }
 }

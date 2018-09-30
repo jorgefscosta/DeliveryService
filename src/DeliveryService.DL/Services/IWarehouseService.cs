@@ -16,8 +16,6 @@ namespace DeliveryService.DL.Services
 
         IEnumerable<WarehouseResponse> GetByName(string name);
 
-        IEnumerable<WarehouseResponse> Where(Expression<Func<WarehouseResponse, bool>> exp);
-
         void Add(WarehouseResponse entry);
 
         void Update(WarehouseResponse entry);

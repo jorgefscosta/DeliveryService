@@ -51,6 +51,7 @@ namespace DeliveryService.API
             services.AddTransient<IBaseRepository<Warehouse>, BaseRepository<Warehouse>>();
             services.AddTransient<IBaseService<Warehouse>, BaseService<Warehouse>>();
             services.AddTransient<IWarehouseService, WarehouseService>();
+            services.AddTransient<IRelationshipRepository<SHIPS_TO>, RelationshipRepository<SHIPS_TO,Warehouse,Warehouse>>();
             services.AddTransient<IRouteService, RouteService>();
         }
 
